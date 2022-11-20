@@ -9,6 +9,7 @@ import 'pages/product_details_page.dart';
 import 'pages/view_product_page.dart';
 import 'providers/order_provider.dart';
 import 'providers/product_provider.dart';
+import 'providers/user_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,7 +17,8 @@ void main() async {
   runApp(MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => ProductProvider()),
-        ChangeNotifierProvider(create: (_) => OrderProvider())
+        ChangeNotifierProvider(create: (_) => OrderProvider()),
+        ChangeNotifierProvider(create: (_) => UserProvider())
       ],
       child: const MyApp()));
 }
