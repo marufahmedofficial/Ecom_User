@@ -1,7 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../customwidgets/main_drawer.dart';
 import '../models/category_model.dart';
+import '../providers/order_provider.dart';
 import '../providers/product_provider.dart';
 import 'product_details_page.dart';
 
@@ -15,10 +17,19 @@ class ViewProductPage extends StatefulWidget {
 
 class _ViewProductPageState extends State<ViewProductPage> {
   CategoryModel? categoryModel;
+
+  @override
+  void didChangeDependencies() {
+    Provider.of<ProductProvider>(context, listen: false).getAllCategories();
+    Provider.of<ProductProvider>(context, listen: false).getAllProducts();
+    Provider.of<OrderProvider>(context, listen: false).getOrderConstants();
+    super.didChangeDependencies();
+  }
+
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
+      drawer: const MainDrawer(),
       appBar: AppBar(
         title: const Text('Products'),
       ),
@@ -51,24 +62,27 @@ class _ViewProductPageState extends State<ViewProductPage> {
                   },
                 ),
               ),
-              provider.productList.isEmpty ?
-              const Expanded(child: Center(child: Text('No item found'),)) :
-              Expanded(
+              provider.productList.isEmpty
+                  ? const Expanded(
+                  child: Center(
+                    child: Text('No item found'),
+                  ))
+                  : Expanded(
                 child: ListView.builder(
                   itemCount: provider.productList.length,
                   itemBuilder: (context, index) {
                     final product = provider.productList[index];
                     return ListTile(
                       onTap: () => Navigator.pushNamed(
-                          context,
-                          ProductDetailsPage.routeName,
+                          context, ProductDetailsPage.routeName,
                           arguments: product),
                       leading: CachedNetworkImage(
                         width: 75,
                         imageUrl: product.thumbnailImageUrl,
                         placeholder: (context, url) =>
                             CircularProgressIndicator(),
-                        errorWidget: (context, url, error) => Icon(Icons.error),
+                        errorWidget: (context, url, error) =>
+                            Icon(Icons.error),
                       ),
                       title: Text(product.productName),
                       subtitle: Text(product.category.categoryName),
