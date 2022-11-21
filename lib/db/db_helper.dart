@@ -1,4 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';import '../models/category_model.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../models/category_model.dart';
 import '../models/order_constant_model.dart';
 import '../models/product_model.dart';
 import '../models/user_model.dart';
@@ -10,6 +11,10 @@ class DbHelper {
     final snapshot = await _db.collection(collectionUser).doc(uid).get();
     return snapshot.exists;
   }
+
+  static Stream<DocumentSnapshot<Map<String, dynamic>>> getUserInfo(
+      String uid) =>
+      _db.collection(collectionUser).doc(uid).snapshots();
 
   static Stream<DocumentSnapshot<Map<String, dynamic>>> getOrderConstants() =>
       _db
@@ -36,5 +41,10 @@ class DbHelper {
         .collection(collectionUser)
         .doc(userModel.userId)
         .set(userModel.toMap());
+  }
+
+  static Future<void> updateUserProfileField(
+      String uid, Map<String, dynamic> map) {
+    return _db.collection(collectionUser).doc(uid).update(map);
   }
 }

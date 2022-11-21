@@ -1,7 +1,9 @@
+import 'package:ecom_user/pages/user_profile_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:provider/provider.dart';
+import 'auth/authservice.dart';
 import 'pages/launcher_page.dart';
 import 'pages/login_page.dart';
 import 'pages/order_page.dart';
@@ -14,24 +16,60 @@ import 'providers/user_provider.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => ProductProvider()),
-        ChangeNotifierProvider(create: (_) => OrderProvider()),
-        ChangeNotifierProvider(create: (_) => UserProvider())
-      ],
-      child: const MyApp()));
+  runApp(MultiProvider(providers: [
+    ChangeNotifierProvider(create: (_) => ProductProvider()),
+    ChangeNotifierProvider(create: (_) => OrderProvider()),
+    ChangeNotifierProvider(create: (_) => UserProvider()),
+  ], child: const MyApp()));
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+class MyApp extends StatefulWidget {
+  const MyApp({super.key});
 
-  // This widget is the root of your application...
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
+  @override
+  void initState() {
+    WidgetsBinding.instance.addObserver(this);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    switch (state) {
+      case AppLifecycleState.paused:
+        print('My App Paused');
+        break;
+      case AppLifecycleState.resumed:
+        print('My App Resumed');
+        break;
+
+      case AppLifecycleState.detached:
+        print('My App Detached');
+        break;
+
+      case AppLifecycleState.inactive:
+        print('My App Inactive');
+        AuthService.logout();
+        break;
+    }
+    super.didChangeAppLifecycleState(state);
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Ecom Admin',
+      title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
@@ -43,6 +81,7 @@ class MyApp extends StatelessWidget {
         ViewProductPage.routeName: (_) => const ViewProductPage(),
         ProductDetailsPage.routeName: (_) => const ProductDetailsPage(),
         OrderPage.routeName: (_) => const OrderPage(),
+        UserProfilePage.routeName: (_) => const UserProfilePage(),
       },
     );
   }
