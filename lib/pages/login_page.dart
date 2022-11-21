@@ -115,7 +115,9 @@ class _LoginPageState extends State<LoginPage> {
                 ],
               ),
               OutlinedButton(
-                onPressed: () {},
+                onPressed: () {
+                  _loginAsGuest();
+                },
                 child: const Text('Login as Guest'),
               ),
               Padding(
@@ -187,13 +189,23 @@ class _LoginPageState extends State<LoginPage> {
         );
         await userProvider.addUser(userModel);
         EasyLoading.dismiss();
-        if (mounted) {
-          Navigator.pushReplacementNamed(context, LauncherPage.routeName);
-        }
+      }
+      if (mounted) {
+        Navigator.pushReplacementNamed(context, LauncherPage.routeName);
       }
     } catch (error) {
       EasyLoading.dismiss();
       rethrow;
     }
+  }
+
+  void _loginAsGuest() {
+    EasyLoading.show(status: 'Please Wait');
+    AuthService.loginAsGuest().then((value) {
+      EasyLoading.dismiss();
+      Navigator.pushReplacementNamed(context, LauncherPage.routeName);
+    }).catchError((error) {
+      EasyLoading.dismiss();
+    });
   }
 }

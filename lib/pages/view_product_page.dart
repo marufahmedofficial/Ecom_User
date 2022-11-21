@@ -5,6 +5,7 @@ import '../customwidgets/main_drawer.dart';
 import '../models/category_model.dart';
 import '../providers/order_provider.dart';
 import '../providers/product_provider.dart';
+import '../providers/user_provider.dart';
 import 'product_details_page.dart';
 
 class ViewProductPage extends StatefulWidget {
@@ -23,6 +24,7 @@ class _ViewProductPageState extends State<ViewProductPage> {
     Provider.of<ProductProvider>(context, listen: false).getAllCategories();
     Provider.of<ProductProvider>(context, listen: false).getAllProducts();
     Provider.of<OrderProvider>(context, listen: false).getOrderConstants();
+    Provider.of<UserProvider>(context, listen: false).getUserInfo();
     super.didChangeDependencies();
   }
 

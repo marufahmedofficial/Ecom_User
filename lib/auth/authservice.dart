@@ -8,6 +8,7 @@ class AuthService {
   static Future<UserCredential> login(String email, String password) async {
     final credential = await _auth.signInWithEmailAndPassword(
         email: email, password: password);
+
     return credential;
   }
 
@@ -22,7 +23,7 @@ class AuthService {
   }
 
   static Future<void> forgotPassword() {
-    return _auth.sendPasswordResetEmail(email: 'mk6116055@gmail.com');
+    return _auth.sendPasswordResetEmail(email: 'tanvir.ahmad@gmail.com');
   }
 
   static Future<UserCredential> signInWithGoogle() async {
@@ -40,5 +41,10 @@ class AuthService {
     return await FirebaseAuth.instance.signInWithCredential(credential);
   }
 
-  static Future<void> logout() => _auth.signOut();
+  static Future<void> logout() async {
+    if (_auth.currentUser!.isAnonymous) {
+      return _auth.currentUser!.delete();
+    }
+    return _auth.signOut();
+  }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../auth/authservice.dart';
 import '../pages/launcher_page.dart';
+import '../pages/user_profile_page.dart';
 
 class MainDrawer extends StatelessWidget {
   const MainDrawer({Key? key}) : super(key: key);
@@ -16,7 +17,10 @@ class MainDrawer extends StatelessWidget {
             height: 150,
           ),
           ListTile(
-            onTap: () {},
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.pushNamed(context, UserProfilePage.routeName);
+            },
             leading: const Icon(Icons.person),
             title: const Text('My Profile'),
           ),
