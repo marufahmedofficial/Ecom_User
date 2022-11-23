@@ -151,14 +151,22 @@ class _LoginPageState extends State<LoginPage> {
         if (tag) {
           credential = await AuthService.login(email, password);
         } else {
-          credential = await AuthService.register(email, password);
-          final userModel = UserModel(
-            userId: credential.user!.uid,
-            email: credential.user!.email!,
-            userCreationTime:
-            Timestamp.fromDate(credential.user!.metadata.creationTime!),
-          );
-          await userProvider.addUser(userModel);
+          if (AuthService.currentUser!.isAnonymous) {
+            //turn anonymous account into a real account
+            final credential =
+            EmailAuthProvider.credential(email: email, password: password);
+            _registerAnonymousUser(credential);
+          } else {
+            //normal registration
+            credential = await AuthService.register(email, password);
+            final userModel = UserModel(
+              userId: credential.user!.uid,
+              email: credential.user!.email!,
+              userCreationTime:
+              Timestamp.fromDate(credential.user!.metadata.creationTime!),
+            );
+            await userProvider.addUser(userModel);
+          }
         }
         EasyLoading.dismiss();
         if (mounted) {
@@ -207,5 +215,39 @@ class _LoginPageState extends State<LoginPage> {
     }).catchError((error) {
       EasyLoading.dismiss();
     });
+  }
+
+  void _registerAnonymousUser(AuthCredential credential) async {
+    try {
+      final userCredential = await FirebaseAuth.instance.currentUser
+          ?.linkWithCredential(credential);
+      if (userCredential!.user != null) {
+        final userModel = UserModel(
+          userId: userCredential.user!.uid,
+          email: userCredential.user!.email!,
+          userCreationTime:
+          Timestamp.fromDate(userCredential.user!.metadata.creationTime!),
+        );
+        await userProvider.addUser(userModel);
+        EasyLoading.dismiss();
+        Navigator.pushReplacementNamed(context, LauncherPage.routeName);
+      }
+    } on FirebaseAuthException catch (e) {
+      switch (e.code) {
+        case "provider-already-linked":
+          print("The provider has already been linked to the user.");
+          break;
+        case "invalid-credential":
+          print("The provider's credential is not valid.");
+          break;
+        case "credential-already-in-use":
+          print("The account corresponding to the credential already exists, "
+              "or is already linked to a Firebase User.");
+          break;
+      // See the API reference for the full list of error codes.
+        default:
+          print("Unknown error.");
+      }
+    }
   }
 }

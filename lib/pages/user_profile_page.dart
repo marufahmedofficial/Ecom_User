@@ -5,6 +5,7 @@ import '../models/address_model.dart';
 import '../models/user_model.dart';
 import '../providers/user_provider.dart';
 import '../utils/widget_functions.dart';
+import 'otp_verification_page.dart';
 
 class UserProfilePage extends StatelessWidget {
   static const String routeName = '/profile';
@@ -21,114 +22,125 @@ class UserProfilePage extends StatelessWidget {
       ),
       body: userProvider.userModel == null
           ? const Center(
-              child: Text('Failed to load user data'),
-            )
+        child: Text('Failed to load user data'),
+      )
           : ListView(
-              children: [
-                _headerSection(context, userProvider),
-                ListTile(
-                  leading: const Icon(Icons.call),
-                  title: Text(userProvider.userModel!.phone ?? 'Not set yet'),
-                  trailing: IconButton(
-                    onPressed: () {},
-                    icon: const Icon(Icons.edit),
-                  ),
-                ),
-                ListTile(
-                  leading: const Icon(Icons.calendar_month),
-                  title: Text(userProvider.userModel!.age ?? 'Not set yet'),
-                  subtitle: const Text('Date of Birth'),
-                  trailing: IconButton(
-                    onPressed: () {},
-                    icon: const Icon(Icons.edit),
-                  ),
-                ),
-                ListTile(
-                  leading: const Icon(Icons.person),
-                  title: Text(userProvider.userModel!.gender ?? 'Not set yet'),
-                  subtitle: const Text('Gender'),
-                  trailing: IconButton(
-                    onPressed: () {},
-                    icon: const Icon(Icons.edit),
-                  ),
-                ),
-                ListTile(
-                  leading: const Icon(Icons.location_city),
-                  title: Text(
-                      userProvider.userModel!.addressModel?.addressLine1 ??
-                          'Not set yet'),
-                  subtitle: const Text('Address Line 1'),
-                  trailing: IconButton(
-                    onPressed: () {
-                      showSingleTextInputDialog(
-                        context: context,
-                        title: 'Address Line 1',
-                        onSubmit: (value) {
-                          userProvider.updateUserProfileField(
-                            '$userFieldAddressModel.$addressFieldAddressLine1',
-                            value,
-                          );
-                        },
-                      );
-                    },
-                    icon: const Icon(Icons.edit),
-                  ),
-                ),
-                ListTile(
-                  leading: const Icon(Icons.location_city),
-                  title: Text(
-                      userProvider.userModel!.addressModel?.addressLine2 ??
-                          'Not set yet'),
-                  subtitle: const Text('Address Line 2'),
-                  trailing: IconButton(
-                    onPressed: () {
-                      showSingleTextInputDialog(
-                        context: context,
-                        title: 'Address Line 2',
-                        onSubmit: (value) {
-                          userProvider.updateUserProfileField(
-                            '$userFieldAddressModel.$addressFieldAddressLine2',
-                            value,
-                          );
-                        },
-                      );
-                    },
-                    icon: const Icon(Icons.edit),
-                  ),
-                ),
-                ListTile(
-                  leading: const Icon(Icons.location_city),
-                  title: Text(userProvider.userModel!.addressModel?.city ??
-                      'Not set yet'),
-                  subtitle: const Text('City'),
-                  trailing: IconButton(
-                    onPressed: () {},
-                    icon: const Icon(Icons.edit),
-                  ),
-                ),
-                ListTile(
-                  leading: const Icon(Icons.location_city),
-                  title: Text(userProvider.userModel!.addressModel?.zipcode ??
-                      'Not set yet'),
-                  subtitle: const Text('Zip Code'),
-                  trailing: IconButton(
-                    onPressed: () {
-                      showSingleTextInputDialog(
-                        context: context,
-                        title: 'Zip Code',
-                        onSubmit: (value) {
-                          userProvider.updateUserProfileField(
-                            '$userFieldAddressModel.$addressFieldZipcode',
-                            value,
-                          );
-                        },
-                      );
-                    },
-                    icon: const Icon(Icons.edit),
-                  ),
-                ),
-              ],
+        children: [
+          _headerSection(context, userProvider),
+          ListTile(
+            leading: const Icon(Icons.call),
+            title: Text(userProvider.userModel!.phone ?? 'Not set yet'),
+            trailing: IconButton(
+              onPressed: () {
+                showSingleTextInputDialog(
+                  context: context,
+                  title: 'Mobile Number',
+                  onSubmit: (value) {
+                    print('input: $value');
+                    Navigator.pushNamed(
+                        context, OtpVerificationPage.routeName,
+                        arguments: value);
+                  },
+                );
+              },
+              icon: const Icon(Icons.edit),
             ),
+          ),
+          ListTile(
+            leading: const Icon(Icons.calendar_month),
+            title: Text(userProvider.userModel!.age ?? 'Not set yet'),
+            subtitle: const Text('Date of Birth'),
+            trailing: IconButton(
+              onPressed: () {},
+              icon: const Icon(Icons.edit),
+            ),
+          ),
+          ListTile(
+            leading: const Icon(Icons.person),
+            title: Text(userProvider.userModel!.gender ?? 'Not set yet'),
+            subtitle: const Text('Gender'),
+            trailing: IconButton(
+              onPressed: () {},
+              icon: const Icon(Icons.edit),
+            ),
+          ),
+          ListTile(
+            leading: const Icon(Icons.location_city),
+            title: Text(
+                userProvider.userModel!.addressModel?.addressLine1 ??
+                    'Not set yet'),
+            subtitle: const Text('Address Line 1'),
+            trailing: IconButton(
+              onPressed: () {
+                showSingleTextInputDialog(
+                  context: context,
+                  title: 'Address Line 1',
+                  onSubmit: (value) {
+                    userProvider.updateUserProfileField(
+                      '$userFieldAddressModel.$addressFieldAddressLine1',
+                      value,
+                    );
+                  },
+                );
+              },
+              icon: const Icon(Icons.edit),
+            ),
+          ),
+          ListTile(
+            leading: const Icon(Icons.location_city),
+            title: Text(
+                userProvider.userModel!.addressModel?.addressLine2 ??
+                    'Not set yet'),
+            subtitle: const Text('Address Line 2'),
+            trailing: IconButton(
+              onPressed: () {
+                showSingleTextInputDialog(
+                  context: context,
+                  title: 'Address Line 2',
+                  onSubmit: (value) {
+                    userProvider.updateUserProfileField(
+                      '$userFieldAddressModel.$addressFieldAddressLine2',
+                      value,
+                    );
+                  },
+                );
+              },
+              icon: const Icon(Icons.edit),
+            ),
+          ),
+          ListTile(
+            leading: const Icon(Icons.location_city),
+            title: Text(userProvider.userModel!.addressModel?.city ??
+                'Not set yet'),
+            subtitle: const Text('City'),
+            trailing: IconButton(
+              onPressed: () {},
+              icon: const Icon(Icons.edit),
+            ),
+          ),
+          ListTile(
+            leading: const Icon(Icons.location_city),
+            title: Text(userProvider.userModel!.addressModel?.zipcode ??
+                'Not set yet'),
+            subtitle: const Text('Zip Code'),
+            trailing: IconButton(
+              onPressed: () {
+                showSingleTextInputDialog(
+                  context: context,
+                  title: 'Zip Code',
+                  onSubmit: (value) {
+                    userProvider.updateUserProfileField(
+                      '$userFieldAddressModel.$addressFieldZipcode',
+                      value,
+                    );
+                  },
+                );
+              },
+              icon: const Icon(Icons.edit),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -140,28 +152,28 @@ class UserProfilePage extends StatelessWidget {
         children: [
           Card(
             shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(45)),
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(45)),
             elevation: 5,
             child: userProvider.userModel!.imageUrl == null
                 ? const Icon(
-                    Icons.person,
-                    size: 90,
-                    color: Colors.grey,
-                  )
+              Icons.person,
+              size: 90,
+              color: Colors.grey,
+            )
                 : Padding(
-                    padding: const EdgeInsets.all(4.0),
-                    child: ClipOval(
-                      child: CachedNetworkImage(
-                        width: 90,
-                        height: 90,
-                        imageUrl: userProvider.userModel!.imageUrl!,
-                        placeholder: (context, url) =>
-                            const Center(child: CircularProgressIndicator()),
-                        errorWidget: (context, url, error) =>
-                            const Icon(Icons.error),
-                      ),
-                    ),
-                  ),
+              padding: const EdgeInsets.all(4.0),
+              child: ClipOval(
+                child: CachedNetworkImage(
+                  width: 90,
+                  height: 90,
+                  imageUrl: userProvider.userModel!.imageUrl!,
+                  placeholder: (context, url) =>
+                  const Center(child: CircularProgressIndicator()),
+                  errorWidget: (context, url, error) =>
+                  const Icon(Icons.error),
+                ),
+              ),
+            ),
           ),
           const SizedBox(
             width: 15,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../auth/authservice.dart';
 import '../pages/launcher_page.dart';
+import '../pages/login_page.dart';
 import '../pages/user_profile_page.dart';
 
 class MainDrawer extends StatelessWidget {
@@ -16,24 +17,35 @@ class MainDrawer extends StatelessWidget {
             color: Theme.of(context).primaryColor,
             height: 150,
           ),
-          ListTile(
-            onTap: () {
-              Navigator.pop(context);
-              Navigator.pushNamed(context, UserProfilePage.routeName);
-            },
-            leading: const Icon(Icons.person),
-            title: const Text('My Profile'),
-          ),
-          ListTile(
-            onTap: () {},
-            leading: const Icon(Icons.shopping_cart),
-            title: const Text('My Cart'),
-          ),
-          ListTile(
-            onTap: () {},
-            leading: const Icon(Icons.monetization_on),
-            title: const Text('My Orders'),
-          ),
+          if (!AuthService.currentUser!.isAnonymous)
+            ListTile(
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.pushNamed(context, UserProfilePage.routeName);
+              },
+              leading: const Icon(Icons.person),
+              title: const Text('My Profile'),
+            ),
+          if (!AuthService.currentUser!.isAnonymous)
+            ListTile(
+              onTap: () {},
+              leading: const Icon(Icons.shopping_cart),
+              title: const Text('My Cart'),
+            ),
+          if (!AuthService.currentUser!.isAnonymous)
+            ListTile(
+              onTap: () {},
+              leading: const Icon(Icons.monetization_on),
+              title: const Text('My Orders'),
+            ),
+          if (AuthService.currentUser!.isAnonymous)
+            ListTile(
+              onTap: () {
+                Navigator.pushReplacementNamed(context, LoginPage.routeName);
+              },
+              leading: const Icon(Icons.person),
+              title: const Text('Login/Register'),
+            ),
           ListTile(
             onTap: () {
               AuthService.logout().then((value) =>

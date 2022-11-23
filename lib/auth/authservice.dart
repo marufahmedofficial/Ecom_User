@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthService {
+  static UserCredential? userCredential;
   static final _auth = FirebaseAuth.instance;
   static User? get currentUser => _auth.currentUser;
 
@@ -38,7 +39,9 @@ class AuthService {
       idToken: googleAuth?.idToken,
     );
     // Once signed in, return the UserCredential
-    return await FirebaseAuth.instance.signInWithCredential(credential);
+    userCredential =
+    await FirebaseAuth.instance.signInWithCredential(credential);
+    return userCredential!;
   }
 
   static Future<void> logout() async {

@@ -48,6 +48,9 @@ dependencies:
   connectivity_plus:
   google_sign_in: ^5.4.2
   pin_code_fields: ^7.4.0
+  google_fonts:
+  flutter_rating_bar:
+
 
 dev_dependencies:
   flutter_test:

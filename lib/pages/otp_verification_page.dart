@@ -2,7 +2,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
+import 'package:provider/provider.dart';
 
+import '../auth/authservice.dart';
+import '../models/user_model.dart';
+import '../providers/user_provider.dart';
 import '../utils/helper_functions.dart';
 
 class OtpVerificationPage extends StatefulWidget {
@@ -154,10 +158,17 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
   }
 
   void _verify() {
+    EasyLoading.show(status: 'Verifying, please wait');
     PhoneAuthCredential credential = PhoneAuthProvider.credential(
         verificationId: vid, smsCode: textEditingController.text);
-    FirebaseAuth.instance.signInWithCredential(credential).then((value) {
-      //print('NEW SIGNED IN USER ID: ${value.user!.uid}');
+    AuthService.currentUser!.linkWithCredential(credential).then((value) {
+      Provider.of<UserProvider>(context, listen: false)
+          .updateUserProfileField(userFieldPhone, phone)
+          .then((value) {
+        EasyLoading.dismiss();
+        showMsg(context, 'Phone verification successful');
+        Navigator.pop(context);
+      });
     }).catchError((error) {
       print(error.toString());
     });

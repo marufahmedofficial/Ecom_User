@@ -1,3 +1,4 @@
+import 'package:ecom_user/pages/otp_verification_page.dart';
 import 'package:ecom_user/pages/user_profile_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -59,7 +60,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
       case AppLifecycleState.inactive:
         print('My App Inactive');
-        AuthService.logout();
+        if (AuthService.currentUser!.isAnonymous) {
+          AuthService.logout();
+        }
         break;
     }
     super.didChangeAppLifecycleState(state);
@@ -82,6 +85,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         ProductDetailsPage.routeName: (_) => const ProductDetailsPage(),
         OrderPage.routeName: (_) => const OrderPage(),
         UserProfilePage.routeName: (_) => const UserProfilePage(),
+        OtpVerificationPage.routeName: (_) => const OtpVerificationPage(),
       },
     );
   }
