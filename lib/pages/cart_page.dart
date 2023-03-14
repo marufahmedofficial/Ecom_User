@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../customwidgets/cart_item_view.dart';
 import '../providers/cart_provider.dart';
+import '../utils/constants.dart';
 
 class CartPage extends StatelessWidget {
   static const String routeName = '/cart';
@@ -35,7 +37,7 @@ class CartPage extends StatelessWidget {
                     Expanded(
                         child: Text(
                       'SUB TOTAL: $currencySymbol${provider.getCartSubTotal()}',
-                      style: Theme.of(context).textTheme.headline6,
+                      style: Theme.of(context).textTheme.titleLarge,
                     )),
                     OutlinedButton(
                       onPressed: provider.totalItemsInCart == 0 ? null : () {},
