@@ -7,6 +7,7 @@ import '../providers/user_provider.dart';
 import '../utils/widget_functions.dart';
 import 'otp_verification_page.dart';
 
+
 class UserProfilePage extends StatelessWidget {
   static const String routeName = '/profile';
 
@@ -31,18 +32,7 @@ class UserProfilePage extends StatelessWidget {
             leading: const Icon(Icons.call),
             title: Text(userProvider.userModel!.phone ?? 'Not set yet'),
             trailing: IconButton(
-              onPressed: () {
-                showSingleTextInputDialog(
-                  context: context,
-                  title: 'Mobile Number',
-                  onSubmit: (value) {
-                    print('input: $value');
-                    Navigator.pushNamed(
-                        context, OtpVerificationPage.routeName,
-                        arguments: value);
-                  },
-                );
-              },
+              onPressed: () {},
               icon: const Icon(Icons.edit),
             ),
           ),
