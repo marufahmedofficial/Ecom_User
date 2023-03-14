@@ -3,11 +3,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:provider/provider.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 import '../auth/authservice.dart';
 import '../models/user_model.dart';
 import '../providers/user_provider.dart';
 import 'launcher_page.dart';
+
+
 
 class LoginPage extends StatefulWidget {
   static const String routeName = '/login';
@@ -151,11 +154,11 @@ class _LoginPageState extends State<LoginPage> {
         if (tag) {
           credential = await AuthService.login(email, password);
         } else {
-          if (AuthService.currentUser!.isAnonymous) {
+          if (AuthService.currentUser != null) {
             //turn anonymous account into a real account
             final credential =
             EmailAuthProvider.credential(email: email, password: password);
-            _registerAnonymousUser(credential);
+            await _registerAnonymousUser(credential);
           } else {
             //normal registration
             credential = await AuthService.register(email, password);
@@ -182,28 +185,38 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void _signInWithGoogle() async {
-    try {
-      final credential = await AuthService.signInWithGoogle();
-      final userExists = await userProvider.doesUserExist(credential.user!.uid);
-      if (!userExists) {
-        EasyLoading.show(status: 'Redirecting...');
-        final userModel = UserModel(
-          userId: credential.user!.uid,
-          email: credential.user!.email!,
-          displayName: credential.user!.displayName,
-          imageUrl: credential.user!.photoURL,
-          phone: credential.user!.phoneNumber,
-          userCreationTime: Timestamp.fromDate(DateTime.now()),
-        );
-        await userProvider.addUser(userModel);
+    if (AuthService.currentUser != null) {
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      final GoogleSignInAuthentication? googleAuth =
+      await googleUser?.authentication;
+      final credential =
+      GoogleAuthProvider.credential(idToken: googleAuth?.idToken);
+      await _registerAnonymousUser(credential);
+    } else {
+      try {
+        final credential = await AuthService.signInWithGoogle();
+        final userExists =
+        await userProvider.doesUserExist(credential.user!.uid);
+        if (!userExists) {
+          EasyLoading.show(status: 'Redirecting...');
+          final userModel = UserModel(
+            userId: credential.user!.uid,
+            email: credential.user!.email!,
+            displayName: credential.user!.displayName,
+            imageUrl: credential.user!.photoURL,
+            phone: credential.user!.phoneNumber,
+            userCreationTime: Timestamp.fromDate(DateTime.now()),
+          );
+          await userProvider.addUser(userModel);
+        }
+      } catch (error) {
         EasyLoading.dismiss();
+        rethrow;
       }
-      if (mounted) {
-        Navigator.pushReplacementNamed(context, LauncherPage.routeName);
-      }
-    } catch (error) {
-      EasyLoading.dismiss();
-      rethrow;
+    }
+    EasyLoading.dismiss();
+    if (mounted) {
+      Navigator.pushReplacementNamed(context, LauncherPage.routeName);
     }
   }
 
@@ -217,20 +230,22 @@ class _LoginPageState extends State<LoginPage> {
     });
   }
 
-  void _registerAnonymousUser(AuthCredential credential) async {
+  Future<void> _registerAnonymousUser(AuthCredential credential) async {
     try {
       final userCredential = await FirebaseAuth.instance.currentUser
           ?.linkWithCredential(credential);
+      print('IS CREDENTIAL NULL : ${userCredential == null}');
       if (userCredential!.user != null) {
         final userModel = UserModel(
           userId: userCredential.user!.uid,
           email: userCredential.user!.email!,
+          displayName: userCredential.user!.displayName,
+          imageUrl: userCredential.user!.photoURL,
+          phone: userCredential.user!.phoneNumber,
           userCreationTime:
           Timestamp.fromDate(userCredential.user!.metadata.creationTime!),
         );
         await userProvider.addUser(userModel);
-        EasyLoading.dismiss();
-        Navigator.pushReplacementNamed(context, LauncherPage.routeName);
       }
     } on FirebaseAuthException catch (e) {
       switch (e.code) {

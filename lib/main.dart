@@ -3,6 +3,7 @@ import 'package:ecom_user/pages/user_profile_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'auth/authservice.dart';
 import 'pages/launcher_page.dart';
@@ -74,6 +75,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       debugShowCheckedModeBanner: false,
       title: 'Ecommerce User',
       theme: ThemeData(
+        textTheme: GoogleFonts.russoOneTextTheme(),
         primarySwatch: Colors.blue,
       ),
       builder: EasyLoading.init(),
