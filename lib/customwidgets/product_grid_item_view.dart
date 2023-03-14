@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../models/product_model.dart';
+import '../pages/product_details_page.dart';
 import '../utils/constants.dart';
 import '../utils/helper_functions.dart';
 
@@ -15,7 +16,8 @@ class ProductGridItemView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {},
+      onTap: () => Navigator.pushNamed(context, ProductDetailsPage.routeName,
+          arguments: productModel),
       child: Card(
         child: Stack(
           children: [
@@ -25,9 +27,9 @@ class ProductGridItemView extends StatelessWidget {
                   child: CachedNetworkImage(
                     imageUrl: productModel.thumbnailImageUrl,
                     placeholder: (context, url) =>
-                        const Center(child: CircularProgressIndicator()),
+                    const Center(child: CircularProgressIndicator()),
                     errorWidget: (context, url, error) =>
-                        const Icon(Icons.error),
+                    const Icon(Icons.error),
                   ),
                 ),
                 Text(
@@ -40,13 +42,13 @@ class ProductGridItemView extends StatelessWidget {
                     child: RichText(
                       text: TextSpan(
                           text:
-                              '$currencySymbol${calculatePriceAfterDiscount(productModel.salePrice, productModel.productDiscount)}',
+                          '$currencySymbol${calculatePriceAfterDiscount(productModel.salePrice, productModel.productDiscount)}',
                           style: const TextStyle(
                               fontSize: 20, color: Colors.black),
                           children: [
                             TextSpan(
                                 text:
-                                    ' $currencySymbol${productModel.salePrice}',
+                                ' $currencySymbol${productModel.salePrice}',
                                 style: const TextStyle(
                                     fontSize: 16,
                                     color: Colors.grey,
@@ -67,7 +69,10 @@ class ProductGridItemView extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text('${productModel.avgRating} '),
+                      Text(productModel.avgRating.toStringAsFixed(1)),
+                      const SizedBox(
+                        width: 5,
+                      ),
                       RatingBar.builder(
                         initialRating: productModel.avgRating.toDouble(),
                         minRating: 0.0,
@@ -77,7 +82,7 @@ class ProductGridItemView extends StatelessWidget {
                         itemSize: 20,
                         itemCount: 5,
                         itemPadding:
-                            const EdgeInsets.symmetric(horizontal: 0.0),
+                        const EdgeInsets.symmetric(horizontal: 0.0),
                         itemBuilder: (context, _) => Icon(
                           Icons.star,
                           color: Colors.amber,
