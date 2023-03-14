@@ -32,7 +32,18 @@ class UserProfilePage extends StatelessWidget {
             leading: const Icon(Icons.call),
             title: Text(userProvider.userModel!.phone ?? 'Not set yet'),
             trailing: IconButton(
-              onPressed: () {},
+              onPressed: () {
+                showSingleTextInputDialog(
+                  context: context,
+                  title: 'Mobile Number',
+                  onSubmit: (value) {
+                    print('input: $value');
+                    Navigator.pushNamed(
+                        context, OtpVerificationPage.routeName,
+                        arguments: value);
+                  },
+                );
+              },
               icon: const Icon(Icons.edit),
             ),
           ),
@@ -176,7 +187,7 @@ class UserProfilePage extends StatelessWidget {
                 userProvider.userModel!.displayName ?? 'No Display Name',
                 style: Theme.of(context)
                     .textTheme
-                    .headline6!
+                    .titleLarge!
                     .copyWith(color: Colors.white),
               ),
               Text(

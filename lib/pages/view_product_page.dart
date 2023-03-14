@@ -11,7 +11,6 @@ import 'product_details_page.dart';
 
 class ViewProductPage extends StatefulWidget {
   static const String routeName = '/viewproduct';
-
   const ViewProductPage({Key? key}) : super(key: key);
 
   @override
@@ -34,64 +33,64 @@ class _ViewProductPageState extends State<ViewProductPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: const MainDrawer(),
-      /*appBar: AppBar(
+      appBar: AppBar(
         title: const Text('Products'),
-      ),*/
+      ),
       body: Consumer<ProductProvider>(
         builder: (context, provider, child) {
-          return CustomScrollView(
-            slivers: [
-              SliverAppBar(
-                expandedHeight: 250,
-                pinned: true,
-                floating: true,
-                flexibleSpace: FlexibleSpaceBar(
-                  title: const Text('Products'),
-                  background: ListView(
-                    children: [
-                      const SizedBox(
-                        height: 50,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: DropdownButtonFormField<CategoryModel>(
-                          hint: const Text('Select Category'),
-                          value: categoryModel,
-                          isExpanded: true,
-                          validator: (value) {
-                            if (value == null) {
-                              return 'Please select a category';
-                            }
-                            return null;
-                          },
-                          items: provider
-                              .getCategoryListForFiltering()
-                              .map((catModel) => DropdownMenuItem(
-                              value: catModel,
-                              child: Text(catModel.categoryName)))
-                              .toList(),
-                          onChanged: (value) {
-                            setState(() {
-                              categoryModel = value;
-                            });
-                            provider.getAllProductsByCategory(categoryModel!);
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
+          return Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: DropdownButtonFormField<CategoryModel>(
+                  hint: const Text('Select Category'),
+                  value: categoryModel,
+                  isExpanded: true,
+                  validator: (value) {
+                    if (value == null) {
+                      return 'Please select a category';
+                    }
+                    return null;
+                  },
+                  items: provider
+                      .getCategoryListForFiltering()
+                      .map((catModel) => DropdownMenuItem(
+                      value: catModel, child: Text(catModel.categoryName)))
+                      .toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      categoryModel = value;
+                    });
+                    provider.getAllProductsByCategory(categoryModel!);
+                  },
                 ),
               ),
-              SliverGrid(
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  childAspectRatio: 0.65,
-                ),
-                delegate: SliverChildBuilderDelegate(
-                  childCount: provider.productList.length,
-                      (context, index) {
+              provider.productList.isEmpty
+                  ? const Expanded(
+                  child: Center(
+                    child: Text('No item found'),
+                  ))
+                  : Expanded(
+                child: ListView.builder(
+                  itemCount: provider.productList.length,
+                  itemBuilder: (context, index) {
                     final product = provider.productList[index];
-                    return ProductGridItemView(productModel: product);
+                    return ListTile(
+                      onTap: () => Navigator.pushNamed(
+                          context, ProductDetailsPage.routeName,
+                          arguments: product),
+                      leading: CachedNetworkImage(
+                        width: 75,
+                        imageUrl: product.thumbnailImageUrl,
+                        placeholder: (context, url) =>
+                            CircularProgressIndicator(),
+                        errorWidget: (context, url, error) =>
+                            Icon(Icons.error),
+                      ),
+                      title: Text(product.productName),
+                      subtitle: Text(product.category.categoryName),
+                      trailing: Text('Stock: ${product.stock}'),
+                    );
                   },
                 ),
               ),
@@ -99,56 +98,6 @@ class _ViewProductPageState extends State<ViewProductPage> {
           );
         },
       ),
-    );
-  }
-
-  Column buildColumn(ProductProvider provider) {
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: DropdownButtonFormField<CategoryModel>(
-            hint: const Text('Select Category'),
-            value: categoryModel,
-            isExpanded: true,
-            validator: (value) {
-              if (value == null) {
-                return 'Please select a category';
-              }
-              return null;
-            },
-            items: provider
-                .getCategoryListForFiltering()
-                .map((catModel) => DropdownMenuItem(
-                value: catModel, child: Text(catModel.categoryName)))
-                .toList(),
-            onChanged: (value) {
-              setState(() {
-                categoryModel = value;
-              });
-              provider.getAllProductsByCategory(categoryModel!);
-            },
-          ),
-        ),
-        provider.productList.isEmpty
-            ? const Expanded(
-            child: Center(
-              child: Text('No item found'),
-            ))
-            : Expanded(
-          child: GridView.builder(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              childAspectRatio: 0.65,
-            ),
-            itemCount: provider.productList.length,
-            itemBuilder: (context, index) {
-              final product = provider.productList[index];
-              return ProductGridItemView(productModel: product);
-            },
-          ),
-        ),
-      ],
     );
   }
 }
