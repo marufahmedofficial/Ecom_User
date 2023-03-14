@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../customwidgets/cart_bubble_view.dart';
 import '../customwidgets/main_drawer.dart';
 import '../customwidgets/product_grid_item_view.dart';
 import '../models/category_model.dart';
