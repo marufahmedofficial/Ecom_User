@@ -48,14 +48,14 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
             Text(
               'Verify Phone Number',
               textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.headline6,
+              style: Theme.of(context).textTheme.titleLarge,
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
                 phone,
                 textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.headline5,
+                style: Theme.of(context).textTheme.headlineSmall,
               ),
             ),
             const Text(
