@@ -27,6 +27,7 @@ class _ViewProductPageState extends State<ViewProductPage> {
     Provider.of<ProductProvider>(context, listen: false).getAllProducts();
     Provider.of<OrderProvider>(context, listen: false).getOrderConstants();
     Provider.of<UserProvider>(context, listen: false).getUserInfo();
+    Provider.of<CartProvider>(context, listen: false).getAllCartItems();
     super.didChangeDependencies();
   }
 
@@ -42,6 +43,9 @@ class _ViewProductPageState extends State<ViewProductPage> {
           return CustomScrollView(
             slivers: [
               SliverAppBar(
+                actions: [
+                  const CartBubbleView(),
+                ],
                 expandedHeight: 250,
                 pinned: true,
                 floating: true,
