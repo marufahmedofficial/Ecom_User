@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import '../auth/authservice.dart';
 import '../models/comment_model.dart';
 import '../models/product_model.dart';
+import '../providers/cart_provider.dart';
 import '../providers/product_provider.dart';
 import '../providers/user_provider.dart';
 import '../utils/constants.dart';

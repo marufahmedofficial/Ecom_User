@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../customwidgets/main_drawer.dart';
 import '../customwidgets/product_grid_item_view.dart';
 import '../models/category_model.dart';
+import '../providers/cart_provider.dart';
 import '../providers/order_provider.dart';
 import '../providers/product_provider.dart';
 import '../providers/user_provider.dart';

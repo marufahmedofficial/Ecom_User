@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../auth/authservice.dart';
 import '../db/db_helper.dart';
+import '../models/cart_model.dart';
 import '../models/product_model.dart';
 import '../utils/helper_functions.dart';
 
