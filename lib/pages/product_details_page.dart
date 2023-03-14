@@ -4,11 +4,13 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:provider/provider.dart';
 import '../auth/authservice.dart';
+import '../models/comment_model.dart';
 import '../models/product_model.dart';
 import '../providers/product_provider.dart';
 import '../providers/user_provider.dart';
 import '../utils/constants.dart';
 import '../utils/helper_functions.dart';
+
 
 class ProductDetailsPage extends StatefulWidget {
   static const String routeName = '/productdetails';
@@ -24,6 +26,8 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
   late ProductProvider productProvider;
   String displayUrl = '';
   double userRating = 0.0;
+  final txtController = TextEditingController();
+  final focusNode = FocusNode();
 
   @override
   void didChangeDependencies() {
@@ -97,6 +101,42 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
               ],
             ),
           ),
+          Padding(
+            padding: EdgeInsets.all(8),
+            child: Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: () {},
+                    icon: Icon(Icons.favorite),
+                    label: Text('ADD TO FAVORITE'),
+                  ),
+                ),
+                Expanded(
+                  child: Consumer<CartProvider>(
+                    builder: (context, provider, child) {
+                      final isInCart =
+                      provider.isProductInCart(productModel.productId!);
+                      return OutlinedButton.icon(
+                        onPressed: () {
+                          if (isInCart) {
+                            provider.removeFromCart(productModel.productId!);
+                          } else {
+                            provider.addToCart(productModel);
+                          }
+                        },
+                        icon: Icon(isInCart
+                            ? Icons.remove_shopping_cart
+                            : Icons.shopping_cart),
+                        label:
+                        Text(isInCart ? 'REMOVE FROM CART' : 'ADD TO CART'),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
           ListTile(
             title: Text(productModel.productName),
             subtitle: Text(productModel.category.categoryName),
@@ -148,8 +188,106 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
               ),
             ),
           ),
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(8),
+              child: Column(
+                children: [
+                  const Text('Add your Comment'),
+                  Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: TextField(
+                      maxLines: 3,
+                      controller: txtController,
+                      focusNode: focusNode,
+                      decoration: InputDecoration(border: OutlineInputBorder()),
+                    ),
+                  ),
+                  OutlinedButton(
+                    onPressed: () async {
+                      if (txtController.text.isEmpty) {
+                        showMsg(context, 'Please provide a comment');
+                        return;
+                      }
+                      if (AuthService.currentUser!.isAnonymous) {
+                        showMsg(
+                            context, 'Please sign in to comment this product');
+                        return;
+                      }
+                      EasyLoading.show(status: 'Please wait');
+                      await productProvider.addComment(
+                          productModel.productId!,
+                          txtController.text,
+                          context.read<UserProvider>().userModel!);
+                      EasyLoading.dismiss();
+                      focusNode.unfocus();
+                      showMsg(context,
+                          'Thanks for your comment. Your comment is waiting for Admin approval.');
+                    },
+                    child: const Text('SUBMIT'),
+                  )
+                ],
+              ),
+            ),
+          ),
+          const Padding(
+            padding: EdgeInsets.all(8),
+            child: Text('All Comments'),
+          ),
+          FutureBuilder<List<CommentModel>>(
+            future: productProvider
+                .getAllCommentsByProduct(productModel.productId!),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                final commentList = snapshot.data!;
+                if (commentList.isEmpty) {
+                  return const Center(
+                    child: Text('No comments found'),
+                  );
+                } else {
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      children: commentList
+                          .map((comment) => Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ListTile(
+                            leading: const Icon(Icons.person),
+                            title: Text(comment.userModel.displayName ??
+                                comment.userModel.email),
+                            subtitle: Text(comment.date),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 16, horizontal: 8),
+                            child: Text(comment.comment),
+                          ),
+                        ],
+                      ))
+                          .toList(),
+                    ),
+                  );
+                }
+              }
+              if (snapshot.hasError) {
+                return const Center(
+                  child: Text('Failed to load comments'),
+                );
+              }
+              return const Center(
+                child: Text('Loading comments...'),
+              );
+            },
+          )
         ],
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    txtController.dispose();
+    super.dispose();
   }
 }

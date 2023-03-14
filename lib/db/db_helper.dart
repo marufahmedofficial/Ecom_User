@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/category_model.dart';
+import '../models/comment_model.dart';
 import '../models/order_constant_model.dart';
 import '../models/product_model.dart';
 import '../models/rating_model.dart';
@@ -24,6 +25,14 @@ class DbHelper {
   static Stream<DocumentSnapshot<Map<String, dynamic>>> getUserInfo(
       String uid) =>
       _db.collection(collectionUser).doc(uid).snapshots();
+
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getAllCartItems(
+      String uid) =>
+      _db
+          .collection(collectionUser)
+          .doc(uid)
+          .collection(collectionCart)
+          .snapshots();
 
   static Stream<DocumentSnapshot<Map<String, dynamic>>> getOrderConstants() =>
       _db
@@ -68,5 +77,51 @@ class DbHelper {
         .collection(collectionRating)
         .doc(ratingModel.userModel.userId);
     return ratDoc.set(ratingModel.toMap());
+  }
+
+  static Future<void> addComment(CommentModel commentModel) {
+    return _db
+        .collection(collectionProduct)
+        .doc(commentModel.productId)
+        .collection(collectionComment)
+        .doc(commentModel.commentId)
+        .set(commentModel.toMap());
+  }
+
+  static Future<QuerySnapshot<Map<String, dynamic>>> getAllCommentsByProduct(
+      String s) {
+    return _db
+        .collection(collectionProduct)
+        .doc(s)
+        .collection(collectionComment)
+        .where(commentFieldApproved, isEqualTo: true)
+        .get();
+  }
+
+  static Future<void> addToCart(String uid, CartModel cartModel) {
+    return _db
+        .collection(collectionUser)
+        .doc(uid)
+        .collection(collectionCart)
+        .doc(cartModel.productId)
+        .set(cartModel.toMap());
+  }
+
+  static Future<void> removeFromCart(String uid, String s) {
+    return _db
+        .collection(collectionUser)
+        .doc(uid)
+        .collection(collectionCart)
+        .doc(s)
+        .delete();
+  }
+
+  static Future<void> updateCartQuantity(String uid, CartModel cartModel) {
+    return _db
+        .collection(collectionUser)
+        .doc(uid)
+        .collection(collectionCart)
+        .doc(cartModel.productId)
+        .set(cartModel.toMap());
   }
 }

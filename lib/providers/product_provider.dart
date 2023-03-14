@@ -4,9 +4,11 @@ import 'package:flutter/material.dart';
 
 import '../db/db_helper.dart';
 import '../models/category_model.dart';
+import '../models/comment_model.dart';
 import '../models/product_model.dart';
 import '../models/rating_model.dart';
 import '../models/user_model.dart';
+import '../utils/helper_functions.dart';
 
 class ProductProvider extends ChangeNotifier {
   List<CategoryModel> categoryList = [];
@@ -73,5 +75,22 @@ class ProductProvider extends ChangeNotifier {
     final avgRating = totalRatings / ratingList.length;
     return DbHelper.updateProductField(
         productId, {productFieldAvgRating: avgRating});
+  }
+
+  Future<void> addComment(String pid, String comment, UserModel userModel) {
+    final commentModel = CommentModel(
+      commentId: DateTime.now().millisecondsSinceEpoch.toString(),
+      userModel: userModel,
+      productId: pid,
+      comment: comment,
+      date: getFormattedDate(DateTime.now(), pattern: 'dd/MM/yyyy hh:mm:s a'),
+    );
+    return DbHelper.addComment(commentModel);
+  }
+
+  Future<List<CommentModel>> getAllCommentsByProduct(String s) async {
+    final snapshot = await DbHelper.getAllCommentsByProduct(s);
+    return List.generate(snapshot.docs.length,
+            (index) => CommentModel.fromMap(snapshot.docs[index].data()));
   }
 }
