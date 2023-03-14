@@ -1,12 +1,12 @@
-
 import 'dart:io';
-
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
 import '../db/db_helper.dart';
 import '../models/category_model.dart';
 import '../models/product_model.dart';
+import '../models/rating_model.dart';
+import '../models/user_model.dart';
 
 class ProductProvider extends ChangeNotifier {
   List<CategoryModel> categoryList = [];
@@ -53,5 +53,25 @@ class ProductProvider extends ChangeNotifier {
 
   Future<void> deleteImage(String downloadUrl) {
     return FirebaseStorage.instance.refFromURL(downloadUrl).delete();
+  }
+
+  Future<void> addRating(
+      String productId, double userRating, UserModel userModel) async {
+    final ratingModel = RatingModel(
+        ratingId: userModel.userId,
+        userModel: userModel,
+        productId: productId,
+        rating: userRating);
+    await DbHelper.addRating(ratingModel);
+    final snapshot = await DbHelper.getRatingsByProduct(productId);
+    final ratingList = List.generate(snapshot.docs.length,
+            (index) => RatingModel.fromMap(snapshot.docs[index].data()));
+    double totalRatings = 0.0;
+    for (var model in ratingList) {
+      totalRatings += model.rating;
+    }
+    final avgRating = totalRatings / ratingList.length;
+    return DbHelper.updateProductField(
+        productId, {productFieldAvgRating: avgRating});
   }
 }

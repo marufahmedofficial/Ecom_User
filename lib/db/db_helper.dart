@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/category_model.dart';
 import '../models/order_constant_model.dart';
 import '../models/product_model.dart';
+import '../models/rating_model.dart';
 import '../models/user_model.dart';
 
 class DbHelper {
@@ -11,6 +12,14 @@ class DbHelper {
     final snapshot = await _db.collection(collectionUser).doc(uid).get();
     return snapshot.exists;
   }
+
+  static Future<QuerySnapshot<Map<String, dynamic>>> getRatingsByProduct(
+      String pid) =>
+      _db
+          .collection(collectionProduct)
+          .doc(pid)
+          .collection(collectionRating)
+          .get();
 
   static Stream<DocumentSnapshot<Map<String, dynamic>>> getUserInfo(
       String uid) =>
@@ -46,5 +55,18 @@ class DbHelper {
   static Future<void> updateUserProfileField(
       String uid, Map<String, dynamic> map) {
     return _db.collection(collectionUser).doc(uid).update(map);
+  }
+
+  static Future<void> updateProductField(String pid, Map<String, dynamic> map) {
+    return _db.collection(collectionProduct).doc(pid).update(map);
+  }
+
+  static Future<void> addRating(RatingModel ratingModel) async {
+    final ratDoc = _db
+        .collection(collectionProduct)
+        .doc(ratingModel.productId)
+        .collection(collectionRating)
+        .doc(ratingModel.userModel.userId);
+    return ratDoc.set(ratingModel.toMap());
   }
 }
