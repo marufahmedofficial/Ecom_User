@@ -6,11 +6,12 @@ import 'package:provider/provider.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 import '../auth/authservice.dart';
+import '../models/notification_model.dart';
 import '../models/user_model.dart';
+import '../providers/notification_provider.dart';
 import '../providers/user_provider.dart';
+import '../utils/constants.dart';
 import 'launcher_page.dart';
-
-
 
 class LoginPage extends StatefulWidget {
   static const String routeName = '/login';
@@ -157,7 +158,7 @@ class _LoginPageState extends State<LoginPage> {
           if (AuthService.currentUser != null) {
             //turn anonymous account into a real account
             final credential =
-            EmailAuthProvider.credential(email: email, password: password);
+                EmailAuthProvider.credential(email: email, password: password);
             await _registerAnonymousUser(credential);
           } else {
             //normal registration
@@ -166,9 +167,17 @@ class _LoginPageState extends State<LoginPage> {
               userId: credential.user!.uid,
               email: credential.user!.email!,
               userCreationTime:
-              Timestamp.fromDate(credential.user!.metadata.creationTime!),
+                  Timestamp.fromDate(credential.user!.metadata.creationTime!),
             );
             await userProvider.addUser(userModel);
+            final notificationModel = NotificationModel(
+              id: DateTime.now().millisecondsSinceEpoch.toString(),
+              type: NotificationType.user,
+              message: 'A new user ${userModel.email} has joined!',
+              userModel: userModel,
+            );
+            await Provider.of<NotificationProvider>(context, listen: false)
+                .addNotification(notificationModel);
           }
         }
         EasyLoading.dismiss();
@@ -188,15 +197,15 @@ class _LoginPageState extends State<LoginPage> {
     if (AuthService.currentUser != null) {
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
       final GoogleSignInAuthentication? googleAuth =
-      await googleUser?.authentication;
+          await googleUser?.authentication;
       final credential =
-      GoogleAuthProvider.credential(idToken: googleAuth?.idToken);
+          GoogleAuthProvider.credential(idToken: googleAuth?.idToken);
       await _registerAnonymousUser(credential);
     } else {
       try {
         final credential = await AuthService.signInWithGoogle();
         final userExists =
-        await userProvider.doesUserExist(credential.user!.uid);
+            await userProvider.doesUserExist(credential.user!.uid);
         if (!userExists) {
           EasyLoading.show(status: 'Redirecting...');
           final userModel = UserModel(
@@ -243,7 +252,7 @@ class _LoginPageState extends State<LoginPage> {
           imageUrl: userCredential.user!.photoURL,
           phone: userCredential.user!.phoneNumber,
           userCreationTime:
-          Timestamp.fromDate(userCredential.user!.metadata.creationTime!),
+              Timestamp.fromDate(userCredential.user!.metadata.creationTime!),
         );
         await userProvider.addUser(userModel);
       }
@@ -259,7 +268,7 @@ class _LoginPageState extends State<LoginPage> {
           print("The account corresponding to the credential already exists, "
               "or is already linked to a Firebase User.");
           break;
-      // See the API reference for the full list of error codes.
+        // See the API reference for the full list of error codes.
         default:
           print("Unknown error.");
       }
