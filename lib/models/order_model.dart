@@ -31,16 +31,16 @@ class OrderModel {
 
   OrderModel(
       {required this.orderId,
-        required this.userId,
-        required this.orderStatus,
-        required this.paymentMethod,
-        required this.grandTotal,
-        required this.discount,
-        required this.VAT,
-        required this.deliveryCharge,
-        required this.orderDate,
-        required this.deliveryAddress,
-        required this.productDetails});
+      required this.userId,
+      required this.orderStatus,
+      required this.paymentMethod,
+      required this.grandTotal,
+      required this.discount,
+      required this.VAT,
+      required this.deliveryCharge,
+      required this.orderDate,
+      required this.deliveryAddress,
+      required this.productDetails});
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -60,18 +60,18 @@ class OrderModel {
   }
 
   factory OrderModel.fromMap(Map<String, dynamic> map) => OrderModel(
-    orderId: map[orderFieldOrderId],
-    userId: map[orderFieldUserId],
-    orderStatus: map[orderFieldOrderStatus],
-    paymentMethod: map[orderFieldPaymentMethod],
-    grandTotal: map[orderFieldGrandTotal],
-    discount: map[orderFieldDiscount],
-    VAT: map[orderFieldVAT],
-    deliveryCharge: map[orderFieldDeliveryCharge],
-    orderDate: DateModel.fromMap(map[orderFieldOrderDate]),
-    deliveryAddress: AddressModel.fromMap(map[orderFieldDeliveryAddress]),
-    productDetails: (map[orderFieldProductDetails] as List)
-        .map((e) => CartModel.fromMap(e))
-        .toList(),
-  );
+        orderId: map[orderFieldOrderId],
+        userId: map[orderFieldUserId],
+        orderStatus: map[orderFieldOrderStatus],
+        paymentMethod: map[orderFieldPaymentMethod],
+        grandTotal: map[orderFieldGrandTotal],
+        discount: map[orderFieldDiscount],
+        VAT: map[orderFieldVAT],
+        deliveryCharge: map[orderFieldDeliveryCharge],
+        orderDate: DateModel.fromMap(map[orderFieldOrderDate]),
+        deliveryAddress: AddressModel.fromMap(map[orderFieldDeliveryAddress]),
+        productDetails: (map[orderFieldProductDetails] as List)
+            .map((e) => CartModel.fromMap(e))
+            .toList(),
+      );
 }
