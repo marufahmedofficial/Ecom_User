@@ -6,15 +6,19 @@ import 'package:provider/provider.dart';
 import '../auth/authservice.dart';
 import '../models/address_model.dart';
 import '../models/date_model.dart';
+import '../models/notification_model.dart';
 import '../models/order_model.dart';
 import '../providers/cart_provider.dart';
+import '../providers/notification_provider.dart';
 import '../providers/order_provider.dart';
 import '../providers/user_provider.dart';
 import '../utils/constants.dart';
 import '../utils/helper_functions.dart';
 import 'order_successful_page.dart';
+
 class CheckoutPage extends StatefulWidget {
   static const String routeName = '/checkout';
+
   const CheckoutPage({Key? key}) : super(key: key);
 
   @override
@@ -30,6 +34,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
   final addressLine1Controller = TextEditingController();
   final addressLine2Controller = TextEditingController();
   final zipCodeController = TextEditingController();
+
   @override
   void didChangeDependencies() {
     orderProvider = Provider.of<OrderProvider>(context);
@@ -278,6 +283,14 @@ class _CheckoutPageState extends State<CheckoutPage> {
       await orderProvider.saveOrder(orderModel);
       await cartProvider.clearCart();
       EasyLoading.dismiss();
+        final notificationModel = NotificationModel(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        type: NotificationType.order,
+        message: 'A new order has been place #${orderModel.orderId}',
+        orderModel: orderModel,
+      );
+      await Provider.of<NotificationProvider>(context, listen: false)
+          .addNotification(notificationModel);
       Navigator.pushNamedAndRemoveUntil(context, OrderSuccessfulPage.routeName,
           ModalRoute.withName(ViewProductPage.routeName));
     } catch (error) {
