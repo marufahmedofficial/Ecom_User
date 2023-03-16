@@ -3,10 +3,10 @@ import '../models/cart_model.dart';
 import '../models/category_model.dart';
 import '../models/comment_model.dart';
 import '../models/order_constant_model.dart';
+import '../models/order_model.dart';
 import '../models/product_model.dart';
 import '../models/rating_model.dart';
 import '../models/user_model.dart';
-
 class DbHelper {
   static final _db = FirebaseFirestore.instance;
 
@@ -39,6 +39,12 @@ class DbHelper {
       _db
           .collection(collectionOrderConstant)
           .doc(documentOrderConstant)
+          .snapshots();
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getAllOrdersByUser(
+      String uid) =>
+      _db
+          .collection(collectionOrder)
+          .where(orderFieldUserId, isEqualTo: uid)
           .snapshots();
 
   static Stream<QuerySnapshot<Map<String, dynamic>>> getAllCategories() =>
@@ -124,5 +130,47 @@ class DbHelper {
         .collection(collectionCart)
         .doc(cartModel.productId)
         .set(cartModel.toMap());
+  }
+
+  static Future<void> saveOrder(OrderModel orderModel) async {
+    final wb = _db.batch();
+    final orderDoc = _db.collection(collectionOrder).doc(orderModel.orderId);
+    wb.set(orderDoc, orderModel.toMap());
+    for (final cartModel in orderModel.productDetails) {
+      final productSnapshot = await _db
+          .collection(collectionProduct)
+          .doc(cartModel.productId)
+          .get();
+      final categorySnapshot = await _db
+          .collection(collectionCategory)
+          .doc(cartModel.categoryId)
+          .get();
+      final prevProductStock = productSnapshot.data()![productFieldStock];
+      final prevCategoryProductCount =
+      categorySnapshot.data()![categoryFieldProductCount];
+      final proDoc = _db.collection(collectionProduct).doc(cartModel.productId);
+      final catDoc =
+      _db.collection(collectionCategory).doc(cartModel.categoryId);
+      wb.update(
+          proDoc, {productFieldStock: (prevProductStock - cartModel.quantity)});
+      wb.update(catDoc, {
+        categoryFieldProductCount:
+        (prevCategoryProductCount - cartModel.quantity)
+      });
+    }
+    return wb.commit();
+  }
+
+  static Future<void> clearCartItems(String uid, List<CartModel> cartList) {
+    final wb = _db.batch();
+    for (final cartModel in cartList) {
+      final doc = _db
+          .collection(collectionUser)
+          .doc(uid)
+          .collection(collectionCart)
+          .doc(cartModel.productId);
+      wb.delete(doc);
+    }
+    return wb.commit();
   }
 }

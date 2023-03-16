@@ -27,6 +27,7 @@ class CartProvider extends ChangeNotifier {
   Future<void> addToCart(ProductModel productModel) {
     final cartModel = CartModel(
       productId: productModel.productId!,
+      categoryId: productModel.category.categoryId!,
       productName: productModel.productName,
       productImageUrl: productModel.thumbnailImageUrl,
       salePrice: num.parse(calculatePriceAfterDiscount(
@@ -42,7 +43,7 @@ class CartProvider extends ChangeNotifier {
   void getAllCartItems() {
     DbHelper.getAllCartItems(AuthService.currentUser!.uid).listen((snapshot) {
       cartList = List.generate(snapshot.docs.length,
-          (index) => CartModel.fromMap(snapshot.docs[index].data()));
+              (index) => CartModel.fromMap(snapshot.docs[index].data()));
       notifyListeners();
     });
   }
@@ -65,5 +66,9 @@ class CartProvider extends ChangeNotifier {
       total += priceWithQuantity(cartModel);
     }
     return total;
+  }
+
+  Future<void> clearCart() {
+    return DbHelper.clearCartItems(AuthService.currentUser!.uid, cartList);
   }
 }
