@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/cart_model.dart';
 import '../models/category_model.dart';
 import '../models/comment_model.dart';
+import '../models/notification_model.dart';
 import '../models/order_constant_model.dart';
 import '../models/order_model.dart';
 import '../models/product_model.dart';
@@ -172,5 +173,12 @@ class DbHelper {
       wb.delete(doc);
     }
     return wb.commit();
+  }
+
+  static Future<void> addNotification(NotificationModel notificationModel) {
+    return _db
+        .collection(collectionNotification)
+        .doc(notificationModel.id)
+        .set(notificationModel.toMap());
   }
 }

@@ -18,7 +18,6 @@ import 'order_successful_page.dart';
 
 class CheckoutPage extends StatefulWidget {
   static const String routeName = '/checkout';
-
   const CheckoutPage({Key? key}) : super(key: key);
 
   @override
@@ -34,7 +33,6 @@ class _CheckoutPageState extends State<CheckoutPage> {
   final addressLine1Controller = TextEditingController();
   final addressLine2Controller = TextEditingController();
   final zipCodeController = TextEditingController();
-
   @override
   void didChangeDependencies() {
     orderProvider = Provider.of<OrderProvider>(context);
@@ -88,10 +86,10 @@ class _CheckoutPageState extends State<CheckoutPage> {
         child: Column(
           children: cartProvider.cartList
               .map((cartModel) => ListTile(
-                    title: Text(cartModel.productName),
-                    trailing: Text(
-                        '${cartModel.quantity}x$currencySymbol${cartModel.salePrice}'),
-                  ))
+            title: Text(cartModel.productName),
+            trailing: Text(
+                '${cartModel.quantity}x$currencySymbol${cartModel.salePrice}'),
+          ))
               .toList(),
         ),
       ),
@@ -107,7 +105,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
             ListTile(
               title: const Text('Sub-Total'),
               trailing:
-                  Text('$currencySymbol${cartProvider.getCartSubTotal()}'),
+              Text('$currencySymbol${cartProvider.getCartSubTotal()}'),
             ),
             ListTile(
               title: Text(
@@ -179,9 +177,9 @@ class _CheckoutPageState extends State<CheckoutPage> {
               },
               items: cities
                   .map((city) => DropdownMenuItem<String>(
-                        value: city,
-                        child: Text(city),
-                      ))
+                value: city,
+                child: Text(city),
+              ))
                   .toList(),
             ),
           ],
@@ -283,7 +281,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
       await orderProvider.saveOrder(orderModel);
       await cartProvider.clearCart();
       EasyLoading.dismiss();
-        final notificationModel = NotificationModel(
+      final notificationModel = NotificationModel(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         type: NotificationType.order,
         message: 'A new order has been place #${orderModel.orderId}',
