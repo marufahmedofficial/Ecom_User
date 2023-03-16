@@ -8,7 +8,6 @@ import '../models/comment_model.dart';
 import '../models/product_model.dart';
 import '../models/rating_model.dart';
 import '../models/user_model.dart';
-import '../utils/helper_functions.dart';
 
 class ProductProvider extends ChangeNotifier {
   List<CategoryModel> categoryList = [];
@@ -77,14 +76,7 @@ class ProductProvider extends ChangeNotifier {
         productId, {productFieldAvgRating: avgRating});
   }
 
-  Future<void> addComment(String pid, String comment, UserModel userModel) {
-    final commentModel = CommentModel(
-      commentId: DateTime.now().millisecondsSinceEpoch.toString(),
-      userModel: userModel,
-      productId: pid,
-      comment: comment,
-      date: getFormattedDate(DateTime.now(), pattern: 'dd/MM/yyyy hh:mm:s a'),
-    );
+  Future<void> addComment(CommentModel commentModel) {
     return DbHelper.addComment(commentModel);
   }
 

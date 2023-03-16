@@ -5,8 +5,10 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:provider/provider.dart';
 import '../auth/authservice.dart';
 import '../models/comment_model.dart';
+import '../models/notification_model.dart';
 import '../models/product_model.dart';
 import '../providers/cart_provider.dart';
+import '../providers/notification_provider.dart';
 import '../providers/product_provider.dart';
 import '../providers/user_provider.dart';
 import '../utils/constants.dart';
@@ -216,14 +218,29 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                         return;
                       }
                       EasyLoading.show(status: 'Please wait');
-                      await productProvider.addComment(
-                          productModel.productId!,
-                          txtController.text,
-                          context.read<UserProvider>().userModel!);
+                      final commentModel = CommentModel(
+                        commentId:
+                        DateTime.now().millisecondsSinceEpoch.toString(),
+                        userModel: context.read<UserProvider>().userModel!,
+                        productId: productModel.productId!,
+                        comment: txtController.text,
+                        date: getFormattedDate(DateTime.now(),
+                            pattern: 'dd/MM/yyyy hh:mm:s a'),
+                      );
+                      await productProvider.addComment(commentModel);
+                      showMsg(context, 'Thanks for your comment. Your comment is waiting for Admin approval.');
+                      final notificationModel = NotificationModel(
+                        id: DateTime.now().millisecondsSinceEpoch.toString(),
+                        type: NotificationType.comment,
+                        message:
+                        'Product ${productModel.productName} has a new comment which is waiting for your approval',
+                        commentModel: commentModel,
+                      );
+                      await Provider.of<NotificationProvider>(context,
+                          listen: false)
+                          .addNotification(notificationModel);
                       EasyLoading.dismiss();
                       focusNode.unfocus();
-                      showMsg(context,
-                          'Thanks for your comment. Your comment is waiting for Admin approval.');
                     },
                     child: const Text('SUBMIT'),
                   )
