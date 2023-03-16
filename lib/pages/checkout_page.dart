@@ -11,6 +11,7 @@ import '../providers/order_provider.dart';
 import '../providers/user_provider.dart';
 import '../utils/constants.dart';
 import '../utils/helper_functions.dart';
+import 'order_successful_page.dart';
 class CheckoutPage extends StatefulWidget {
   static const String routeName = '/checkout';
   const CheckoutPage({Key? key}) : super(key: key);
