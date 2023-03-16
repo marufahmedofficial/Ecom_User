@@ -82,7 +82,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       debugShowCheckedModeBanner: false,
       title: 'Ecommerce User',
       theme: ThemeData(
-        textTheme: GoogleFonts.russoOneTextTheme(),
+        textTheme: GoogleFonts.actorTextTheme(),
         primarySwatch: Colors.blue,
       ),
       builder: EasyLoading.init(),

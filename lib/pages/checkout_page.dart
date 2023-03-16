@@ -76,7 +76,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
       child: Text(
         title,
         style: const TextStyle(
-            fontSize: 16, fontWeight: FontWeight.bold, color: Colors.grey),
+            fontSize: 13, fontWeight: FontWeight.bold, color: Colors.grey),
       ),
     );
   }
@@ -193,7 +193,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
   Widget buildPaymentMethodSection() {
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(8),
+        padding: const EdgeInsets.all(2),
         child: Row(
           children: [
             Radio<String>(
