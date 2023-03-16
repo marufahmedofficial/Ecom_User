@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../auth/authservice.dart';
 import '../pages/launcher_page.dart';
 import '../pages/login_page.dart';
+import '../pages/order_page.dart';
 import '../pages/user_profile_page.dart';
 
 class MainDrawer extends StatelessWidget {
@@ -34,7 +35,9 @@ class MainDrawer extends StatelessWidget {
             ),
           if (!AuthService.currentUser!.isAnonymous)
             ListTile(
-              onTap: () {},
+              onTap: () {
+                Navigator.pushNamed(context, OrderPage.routeName);
+              },
               leading: const Icon(Icons.monetization_on),
               title: const Text('My Orders'),
             ),
