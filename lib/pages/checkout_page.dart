@@ -1,8 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ecom_user/pages/view_product_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:provider/provider.dart';
+import '../auth/authservice.dart';
+import '../models/address_model.dart';
 import '../models/order_model.dart';
+import '../providers/cart_provider.dart';
+import '../providers/order_provider.dart';
+import '../providers/user_provider.dart';
+import '../utils/constants.dart';
+import '../utils/helper_functions.dart';
 class CheckoutPage extends StatefulWidget {
   static const String routeName = '/checkout';
   const CheckoutPage({Key? key}) : super(key: key);
