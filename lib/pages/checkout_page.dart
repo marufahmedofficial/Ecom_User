@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecom_user/pages/view_product_page.dart';
 import 'package:flutter/material.dart';

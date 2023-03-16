@@ -1,8 +1,10 @@
 import 'package:ecom_user/pages/cart_page.dart';
 import 'package:ecom_user/pages/checkout_page.dart';
+import 'package:ecom_user/pages/order_successful_page.dart';
 import 'package:ecom_user/pages/otp_verification_page.dart';
 import 'package:ecom_user/pages/user_profile_page.dart';
 import 'package:ecom_user/providers/cart_provider.dart';
+import 'package:ecom_user/providers/notification_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -26,6 +28,7 @@ void main() async {
     ChangeNotifierProvider(create: (_) => OrderProvider()),
     ChangeNotifierProvider(create: (_) => UserProvider()),
     ChangeNotifierProvider(create: (_) => CartProvider()),
+    ChangeNotifierProvider(create: (_) => NotificationProvider()),
   ], child: const MyApp()));
 }
 
@@ -91,6 +94,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         ProductDetailsPage.routeName: (_) => const ProductDetailsPage(),
         OrderPage.routeName: (_) => const OrderPage(),
         CartPage.routeName: (_) => const CartPage(),
+        OrderSuccessfulPage.routeName: (_) => const OrderSuccessfulPage(),
         UserProfilePage.routeName: (_) => const UserProfilePage(),
         OtpVerificationPage.routeName: (_) => const OtpVerificationPage(),
         CheckoutPage.routeName: (_) => const CheckoutPage(),
