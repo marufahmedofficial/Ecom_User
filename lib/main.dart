@@ -1,4 +1,5 @@
 import 'package:ecom_user/pages/cart_page.dart';
+import 'package:ecom_user/pages/checkout_page.dart';
 import 'package:ecom_user/pages/otp_verification_page.dart';
 import 'package:ecom_user/pages/user_profile_page.dart';
 import 'package:ecom_user/providers/cart_provider.dart';
@@ -92,6 +93,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         CartPage.routeName: (_) => const CartPage(),
         UserProfilePage.routeName: (_) => const UserProfilePage(),
         OtpVerificationPage.routeName: (_) => const OtpVerificationPage(),
+        CheckoutPage.routeName: (_) => const CheckoutPage(),
       },
     );
   }

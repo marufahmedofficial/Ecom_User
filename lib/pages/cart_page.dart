@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../customwidgets/cart_item_view.dart';
 import '../providers/cart_provider.dart';
 import '../utils/constants.dart';
+import 'checkout_page.dart';
 
 class CartPage extends StatelessWidget {
   static const String routeName = '/cart';
@@ -40,7 +41,9 @@ class CartPage extends StatelessWidget {
                       style: Theme.of(context).textTheme.titleLarge,
                     )),
                     OutlinedButton(
-                      onPressed: provider.totalItemsInCart == 0 ? null : () {},
+                      onPressed: provider.totalItemsInCart == 0 ? null : () {
+                        Navigator.pushNamed(context, CheckoutPage.routeName);
+                      },
                       child: const Text('CHEKCOUT'),
                     )
                   ],
