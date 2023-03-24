@@ -13,6 +13,13 @@ class ProductProvider extends ChangeNotifier {
   List<CategoryModel> categoryList = [];
   List<ProductModel> productList = [];
 
+  Future<ProductModel> getProductById(String id) async {
+    final snapshot = await DbHelper.getProductById(id);
+    return ProductModel.fromMap(snapshot.data()!);
+  }
+
+
+
   getAllCategories() {
     DbHelper.getAllCategories().listen((snapshot) {
       categoryList = List.generate(snapshot.docs.length,
