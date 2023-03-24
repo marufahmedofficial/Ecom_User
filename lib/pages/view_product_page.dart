@@ -12,6 +12,7 @@ import '../providers/product_provider.dart';
 import '../providers/user_provider.dart';
 import '../utils/notification_service.dart';
 import 'product_details_page.dart';
+import 'promo_code_page.dart';
 
 class ViewProductPage extends StatefulWidget {
   static const String routeName = '/viewproduct';
