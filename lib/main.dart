@@ -6,6 +6,7 @@ import 'package:ecom_user/pages/user_profile_page.dart';
 import 'package:ecom_user/providers/cart_provider.dart';
 import 'package:ecom_user/providers/notification_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -15,14 +16,28 @@ import 'pages/launcher_page.dart';
 import 'pages/login_page.dart';
 import 'pages/order_page.dart';
 import 'pages/product_details_page.dart';
+import 'pages/promo_code_page.dart';
 import 'pages/view_product_page.dart';
 import 'providers/order_provider.dart';
 import 'providers/product_provider.dart';
 import 'providers/user_provider.dart';
 
+@pragma('vm:entry-point')
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  // If you're going to use other Firebase services in the background, such as Firestore,
+  // make sure you call `initializeApp` before using other Firebase services.
+
+  print("Handling a background message: ${message.data}");
+}
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  final fcmToken = await FirebaseMessaging.instance.getToken();
+  await FirebaseMessaging.instance.subscribeToTopic('promo');
+  await FirebaseMessaging.instance.subscribeToTopic('newproduct');
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  //print('FCM TOKEN $fcmToken');
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(create: (_) => ProductProvider()),
     ChangeNotifierProvider(create: (_) => OrderProvider()),
@@ -76,13 +91,14 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     super.didChangeAppLifecycleState(state);
   }
 
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Ecommerce User',
       theme: ThemeData(
-        textTheme: GoogleFonts.actorTextTheme(),
+        textTheme: GoogleFonts.russoOneTextTheme(),
         primarySwatch: Colors.blue,
       ),
       builder: EasyLoading.init(),
@@ -94,6 +110,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         ProductDetailsPage.routeName: (_) => const ProductDetailsPage(),
         OrderPage.routeName: (_) => const OrderPage(),
         CartPage.routeName: (_) => const CartPage(),
+        PromoCodePage.routeName: (_) => const PromoCodePage(),
         OrderSuccessfulPage.routeName: (_) => const OrderSuccessfulPage(),
         UserProfilePage.routeName: (_) => const UserProfilePage(),
         OtpVerificationPage.routeName: (_) => const OtpVerificationPage(),
