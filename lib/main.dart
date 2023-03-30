@@ -96,7 +96,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Ecommerce User',
+      title: 'Flutter Demo',
       theme: ThemeData(
         textTheme: GoogleFonts.russoOneTextTheme(),
         primarySwatch: Colors.blue,
