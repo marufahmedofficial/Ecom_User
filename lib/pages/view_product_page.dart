@@ -211,4 +211,3 @@ class _ViewProductPageState extends State<ViewProductPage> {
     }
   }
 }
-
